@@ -1,0 +1,75 @@
+<html>
+
+<head>
+    <title>Emotion recognition</title>
+</head>
+
+<body>
+    <h2>Emotion recognition</h2>
+    <video controls autoplay ></video>
+    <img src="" id="screenshotImage">
+    <canvas id="screenshotCanvas"></canvas>
+    <p id="emotion"></p>
+    <p id="predictions"></p>
+
+    <script>
+
+
+        const video = document.querySelector('video');
+        const canvas = document.getElementById('screenshotCanvas');
+        const img = document.getElementById('screenshotImage');
+        const emotionNode = document.getElementById('emotion');
+        const predictionsNode = document.getElementById('predictions');
+        const classifierURL = "/classify";
+
+        const constraints = {
+            video: true
+        };
+        navigator.mediaDevices.getUserMedia(constraints).
+            then((stream) => { video.srcObject = stream });
+
+
+        function updateScreenshot() {
+            // Update canvas
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+        }
+
+        function updatePrediction() {
+            // Make
+            let imgData = canvas.toDataUrl().split(',')[1];
+            jQuery.ajax({
+                type: "POST",
+                url: classifierURL,
+                data: {
+                    imgBase64: imgData
+                }
+            }).done(showClassification)
+        }
+
+        function getMostProbableEmotion(predictions) {
+            // Predictions is an sorted array of [class, loss]
+            if (predictions[0][1] < 20) {
+                return predictions[0];
+            } else {
+                return ['Neutral', 0];
+            }
+        }
+
+        function showClassification(o) {
+            if (o && o['predictions']) {
+                predictions = o['predictions'];
+                predictionsNode.innerHTML = JSON.stringify(predictions, null, 2);
+
+                let result = getMostProbableEmotion(predictions);
+                emotionNode.innerHTML = result[0];
+            }
+        }
+
+        setInterval(updateScreenshot, 200);
+        setInterval(updateScreenshot, 1000);
+    </script>
+</body>
+
+</html>

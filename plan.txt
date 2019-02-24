@@ -1,0 +1,10 @@
+1. choose the best platform: I think using the web will both be easier and cooler
+2. see how to capture webcam images on the web and show it live
+3. periodically send an image to the GCE emotion classifier and show the result in the web page
+4. choose API for server <-> front-end communication
+
+TODO:
+
+4. train a emotion classifier
+5. deploy the emotion classifier on GCE
+
