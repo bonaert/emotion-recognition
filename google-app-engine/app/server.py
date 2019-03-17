@@ -62,7 +62,7 @@ async def classify(request):
     
     pred_class, pred_index, losses = learn.predict(img)
     result = sorted(
-        zip(learn.data.classes, map(float, losses)),
+        zip(map(str, learn.data.classes), map(float, losses)),
         key= lambda p: p[1],
         reverse=True
     )
